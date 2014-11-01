@@ -42,6 +42,7 @@ void execChild(pNode list) {
     argv[i] = NULL;
 
     execvp(list->value, argv);
+    perror("Invalid input");
     exit(EXIT_SUCCESS);
 }
 

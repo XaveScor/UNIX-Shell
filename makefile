@@ -1,25 +1,21 @@
-Xshell:		main.o list.o exec.o Xstring.o input.o
-			gcc main.o list.o exec.o Xstring.o input.o -o Xshell -O0 -std=c99
+SRCMODULES = main.c list.c exec.c Xstring.c input.c
+OBJMODULES = $(SRCMODULES:.c=.o)
+CFLAGS = -std=c99 -O0
+FILENAME = Xshell
+TEMP_MAKE_FILE = deps.mk
 
-main.o:		main.c main.h
-			gcc -c main.c -std=c99
+$(FILENAME):	$(OBJMODULES)
+		$(CC) $^ -o $@ $(CFLAGS); make clean
 
-list.o:		list.c main.h
-			gcc -c list.c -std=c99
+%.o: %.c %.h
+		$(CC) -c $< $(CFLAGS) -o $@
+		
+ifneq (clean, $(MAKECMDGOALS))
+-include $(TEMP_MAKE_FILE)
+endif
 
-exec.o:		exec.c main.h
-			gcc -c exec.c -std=c99
+$(TEMP_MAKE_FILE): $(SRCMODULES)
+		$(CC) -MM $^ > $@
 
-Xstring.o:	Xstring.c main.h
-			gcc -c Xstring.c -std=c99
-
-input.o:	input.c main.h
-			gcc -c input.c -std=c99
-			
-clean:
-			rm main.o list.o exec.o Xstring.o input.o
-
-run:	Xshell
-		./Xshell
-
-
+clean:		
+		rm -f $(OBJMODULES) $(TEMP_MAKE_FILE)

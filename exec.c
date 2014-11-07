@@ -30,11 +30,11 @@ void execChild(pNode list) {
         temp = temp->next;
     }
 
-    argv = (char **)malloc(sizeof(char *) * (i + 1));
+    argv = (char **)malloc(sizeof(char *) * (i + 1)); // Last pointer is NULL
     i = 0;
     temp = list;
     while(temp) {
-        argv[i] = (char *)malloc(sizeof(char) * strlen(temp->value) + 1);
+        argv[i] = (char *)malloc(sizeof(char) * (strlen(temp->value) + 1)); // strlen not calculate a last '\0' symbol
         strcpy(argv[i], temp->value);
         temp = temp->next;
         ++i;

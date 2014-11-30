@@ -1,54 +1,54 @@
 #include "main.h"
 
 void exec(pNode list) {
-    if (list == NULL)
-        return;
+	if (list == NULL)
+		return;
 
-    if (!strcmp(list->value, "cd"))
-        return execCD(list->next);
+	if (!strcmp(list->value, "cd"))
+		return execCD(list->next);
 
-    if (!strcmp(list->value, "exit"))
-        Xexit();
+	if (!strcmp(list->value, "exit"))
+		Xexit();
 
-    if (fork())
-        return execParent();
+	if (fork())
+		return execParent();
 
-    execChild(list);
+	execChild(list);
 }
 
 void execParent() {
-    wait(0);
+	wait(0);
 }
 
 void execChild(pNode list) {
-    char **argv = NULL;
+	char **argv = NULL;
 
-    size_t i = 0;
-    pNode temp = list;
-    while(temp) {
-        ++i;
-        temp = temp->next;
-    }
+	size_t i = 0;
+	pNode temp = list;
+	while(temp) {
+		++i;
+		temp = temp->next;
+	}
 
-    argv = (char **)malloc(sizeof(char *) * (i + 1)); // Last pointer is NULL
-    i = 0;
-    temp = list;
-    while(temp) {
-        argv[i] = (char *)malloc(sizeof(char) * (strlen(temp->value) + 1)); // strlen not calculate a last '\0' symbol
-        strcpy(argv[i], temp->value);
-        temp = temp->next;
-        ++i;
-    }
-    argv[i] = NULL;
+	argv = (char **)malloc(sizeof(char *) * (i + 1)); // Last pointer is NULL
+	i = 0;
+	temp = list;
+	while(temp) {
+		argv[i] = (char *)malloc(sizeof(char) * (strlen(temp->value) + 1)); // strlen not calculate a last '\0' symbol
+		strcpy(argv[i], temp->value);
+		temp = temp->next;
+		++i;
+	}
+	argv[i] = NULL;
 
-    execvp(list->value, argv);
-    perror("Invalid input");
-    exit(EXIT_SUCCESS);
+	execvp(list->value, argv);
+	perror("Invalid input");
+	exit(EXIT_SUCCESS);
 }
 
 void execCD(pNode child) {
-    if (!child)
-        return;
+	if (!child)
+		return;
 
-    chdir(child->value);
+	chdir(child->value);
 }

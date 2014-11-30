@@ -1,2 +1,7 @@
 #Binary files
 Xshell
+cppcheck
+
+#Text files
+*.log
+*.swp

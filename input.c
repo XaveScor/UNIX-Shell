@@ -1,13 +1,13 @@
 #include "main.h"
 
 char input(pNode *list) {
-	size_t cur = 0,
-		   len = 1;
-	char ch = EOS, *str = NULL;
+	char ch = EOS;
+	pString str = NULL, backgroundStr = NULL;
 	bool state = false;
 
 	clearList(list);
 	clearStr(&str);
+	setBackgroundStr(&backgroundStr);
 
 	while (ch = getchar()) {
 		if (state)
@@ -20,7 +20,7 @@ char input(pNode *list) {
 						continue;
 					break;
 				default:
-					addSymbol(ch, &str, &cur, &len);
+					addSymbol(ch, str);
 					continue;
 			}
 
@@ -30,17 +30,20 @@ char input(pNode *list) {
 				break;
 
 			default:
-				addSymbol(ch, &str, &cur, &len);
+				addSymbol(ch, str);
 				break;
 
+			case BACKGROUND:
 			case DELIMITER:
 			case EOF:
 			case SEPARATOR:
-				str[cur] = EOS;
 				pushList(str, list);
 
 				clearStr(&str);
-				cur = 0, len = 1;
+				if (ch == BACKGROUND) {
+					pushList(backgroundStr, list);
+					continue;
+				}
 				if (ch == SEPARATOR)
 					continue;
 				return ch;

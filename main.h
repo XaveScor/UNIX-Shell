@@ -14,8 +14,16 @@
 #define EOS '\0'
 #define SEPARATOR ' '
 #define BORDER '"'
+#define BACKGROUND '&'
+
 #define MULTIPLYER 1.6
 
+typedef struct sstr* pString;
+typedef struct sstr {
+	char *data;
+	size_t length;
+	size_t mem_alloc;
+} String;
 
 typedef struct sNode* pNode;
 typedef struct sNode{
@@ -27,11 +35,12 @@ char input(pNode *);
 void Xexit();
 
 void clearList(pNode *);
-void pushList(char *, pNode *);
+void pushList(pString, pNode *);
 
-void addSymbol(char, char **, size_t *, size_t *);
-void clearStr(char **);
+void addSymbol(char, pString);
+void clearStr(pString *);
 void printHello();
+void setBackgroundStr(pString *);
 
 void exec(pNode);
 void execParent();

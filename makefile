@@ -5,7 +5,7 @@ FILENAME = Xshell
 TEMP_MAKE_FILE = deps.mk
 
 $(FILENAME):	$(OBJMODULES)
-		$(CC) $^ -o $@ $(CFLAGS); make clean
+		$(CC) $^ -o $@ $(CFLAGS)
 
 %.o: %.c %.h
 		$(CC) -c $< $(CFLAGS) -o $@
@@ -17,5 +17,8 @@ endif
 $(TEMP_MAKE_FILE): $(SRCMODULES)
 		$(CC) -MM $^ > $@
 
-clean:		
-		rm -f $(OBJMODULES) $(TEMP_MAKE_FILE)
+clean:
+		$(RM) $(OBJMODULES) $(TEMP_MAKE_FILE)
+
+run:
+		./$(FILENAME)

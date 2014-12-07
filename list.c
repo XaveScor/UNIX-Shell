@@ -10,17 +10,17 @@ void clearList(pNode *list) {
 	}
 }
 
-void pushList(char *str, pNode *list) {
-	if (!strlen(str))
+void pushList(pString str, pNode *list) {
+	if (!strlen(str->data) || !str)
 		return;
 
 	pNode el = (pNode)malloc(sizeof(Node));
 	assert(el);
-	el->value = (char *)malloc(sizeof(char) * strlen(str) + 1);
+	el->value = (char *)malloc(sizeof(char) * (str->length + 1));
 	assert(el->value);
 	el->next = NULL;
 
-	strcpy(el->value, str);
+	strcpy(el->value, str->data);
 
 	if (!(*list)) {
 		*list = el;

@@ -33,3 +33,42 @@ void pushList(pString str, pNode *list) {
 	}
 	temp->next = el;
 }
+
+void listToArray(pNode list, char ***argv) {
+	dropTrushEl(&list);
+	size_t i = 0;
+	pNode temp = list;
+	while(temp) {
+		++i;
+		temp = temp->next;
+	}
+
+	*argv = (char **)malloc(sizeof(char *) * (i + 1)); // Last pointer is NULL
+	i = 0;
+	temp = list;
+	while(temp) {
+		(*argv)[i] = (char *)malloc(sizeof(char) * (strlen(temp->value) + 1)); // strlen not calculate a last '\0' symbol
+		strcpy((*argv)[i], temp->value);
+		temp = temp->next;
+		++i;
+	}
+	(*argv)[i] = NULL;
+
+}
+
+void dropTrushEl(pNode *list) {
+	pNode temp = *list;
+	while (temp) {
+		if (!strcmp(BACKGROUND_STR, temp->value)) {
+			dropEl(&temp);
+		}
+		temp = temp->next;
+	}
+}
+
+void dropEl(pNode *el) {
+	pNode backup = (*el)->next;
+	free((*el)->value);
+	free(*el);
+	*el = backup;
+}

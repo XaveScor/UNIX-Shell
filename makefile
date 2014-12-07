@@ -1,4 +1,4 @@
-SRCMODULES = main.c list.c exec.c Xstring.c input.c
+SRCMODULES = main.c list.c exec.c Xstring.c input.c flag.c
 OBJMODULES = $(SRCMODULES:.c=.o)
 CFLAGS = -std=c99 -O0
 FILENAME = Xshell

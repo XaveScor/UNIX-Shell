@@ -21,29 +21,46 @@ void execParent() {
 }
 
 void execChild(pNode list) {
-	char **argv = NULL;
+	flag_t flag = getFlag(list);
 
-	size_t i = 0;
-	pNode temp = list;
-	while(temp) {
-		++i;
-		temp = temp->next;
+	if (isFlag(flag, FLAG_ERROR)) {
+		perror("Wrong input");
+		exit(EXIT_FAILURE);
+	}
+	
+	if (isFlag(flag, FLAG_BACKGROUND)) {
+		//Отвязываемся от консоли
+		if (fork()) {
+			exit(EXIT_SUCCESS);
+		}
+		setsid();
+
+		pid_t childPid;
+		// Выводим сообщение о завершении
+		if (childPid = fork()) {
+			int status;
+			wait(&status);
+
+			putchar('\n');
+			printf("---------------------\n");
+			printf("Process closed.\n");
+			printf("pid = %d\n", childPid);
+			printf("exit status = %d\n", status);
+			printf("---------------------\n");
+			exit(EXIT_SUCCESS);
+		}
+
+		close(0);
+		close(1);
+		close(2);
 	}
 
-	argv = (char **)malloc(sizeof(char *) * (i + 1)); // Last pointer is NULL
-	i = 0;
-	temp = list;
-	while(temp) {
-		argv[i] = (char *)malloc(sizeof(char) * (strlen(temp->value) + 1)); // strlen not calculate a last '\0' symbol
-		strcpy(argv[i], temp->value);
-		temp = temp->next;
-		++i;
-	}
-	argv[i] = NULL;
-
+	char **argv;
+	listToArray(list, &argv);
 	execvp(list->value, argv);
-	perror("Invalid input");
-	exit(EXIT_SUCCESS);
+	perror("Wrong input");
+	
+	exit(EXIT_FAILURE);
 }
 
 void execCD(pNode child) {

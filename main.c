@@ -9,13 +9,7 @@ int main() {
 	while (ch = input(&list)) {
 		if (ch == EOF)
 			break;
-		//exec(list);
-		pNode temp = list;
-		while (temp) {
-			printf("(%s) ", temp->value);
-			temp = temp->next;
-		}
-		putchar('\n');
+		exec(list);
 		printHello();
 	}
 	return 0;

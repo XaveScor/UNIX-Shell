@@ -16,7 +16,15 @@
 #define BORDER '"'
 #define BACKGROUND '&'
 
+#define BACKGROUND_STR "$"
+
+#define FLAG_ERROR      0
+#define FLAG_NORMAL     1
+#define FLAG_BACKGROUND 2
+
 #define MULTIPLYER 1.6
+
+typedef size_t flag_t;
 
 typedef struct sstr* pString;
 typedef struct sstr {
@@ -36,6 +44,9 @@ void Xexit();
 
 void clearList(pNode *);
 void pushList(pString, pNode *);
+void listToArray(pNode, char ***);
+void dropTrushEl(pNode *);
+void dropEl(pNode *);
 
 void addSymbol(char, pString);
 void clearStr(pString *);
@@ -46,3 +57,7 @@ void exec(pNode);
 void execParent();
 void execChild(pNode);
 void execCD(pNode);
+
+flag_t getFlag(pNode);
+bool isFlag(flag_t, flag_t);
+void addFlag(flag_t *, flag_t);

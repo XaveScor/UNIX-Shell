@@ -1,6 +1,8 @@
 #Binary files
 Xshell
 cppcheck
+*.o
+*.mk
 
 #Text files
 *.log

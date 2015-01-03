@@ -7,3 +7,4 @@ cppcheck
 #Text files
 *.log
 *.swp
+startTests

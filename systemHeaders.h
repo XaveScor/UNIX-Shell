@@ -12,4 +12,6 @@
 #include <sys/wait.h>
 #include <sys/types.h>
 
+#define EOS '\0'
+
 #endif

@@ -1,7 +1,10 @@
 #include "list.h"
 
 void initList(pNode *list) {
-	printf("Hi)");
+	*list = (pNode)calloc(1, sizeof(Node));
+	(*list)->nav = (pNodeNav)malloc(sizeof(NodeNav));
+	(*list)->nav->first = *list;
+	(*list)->nav->last = *list;
 }
 
 void pushBackList(pString str, pNode list) {

@@ -13,8 +13,10 @@ typedef struct sstr {
 } String;
 
 void addSymbol(char, pString);
+void initStr(pString *);
 void clearStr(pString *);
-void printHello();
+void printHello(void);
 void setBackgroundStr(pString *);
+void getStr(pString, char **);
 
 #endif

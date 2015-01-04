@@ -13,6 +13,7 @@ void tearDown(void)
 void test_initStr(void) {
 	pString str = NULL;
 	initStr(&str);
+	TEST_ASSERT_NOT_NULL(str);
 	TEST_ASSERT_EQUAL_STRING(str->data, "");
 	TEST_ASSERT_EQUAL_INT(str->length, 0);
 	TEST_ASSERT_EQUAL_INT(str->mem_alloc, sizeof(char));

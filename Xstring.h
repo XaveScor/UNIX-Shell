@@ -5,8 +5,8 @@
 
 #define MULTIPLYER 1.6
 
-typedef struct sstr* pString;
-typedef struct sstr {
+typedef struct sStr* pString;
+typedef struct sStr {
 	char *data;
 	size_t length;
 	size_t mem_alloc;
@@ -18,5 +18,7 @@ void clearStr(pString *);
 void printHello(void);
 void setBackgroundStr(pString *);
 void getStr(pString, char **);
+
+void foo();
 
 #endif

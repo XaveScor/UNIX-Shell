@@ -4,6 +4,8 @@
 #include "systemHeaders.h"
 #include "Xstring.h"
 
+#define LAST_NODE (pNode *)NULL
+
 typedef struct sNode* pNode;
 typedef struct sNodeNav* pNodeNav;
 
@@ -21,10 +23,8 @@ typedef struct sNode {
 
 void initList(pNode *);
 void pushBackList(pString, pNode);
-void changeNodeList(pString, pNode);
-void nextNodeList(pNode *);
+bool nextNodeList(pNode *);
 void atStartList(pNode *);
 void removeNodesList(pNode *, pNode *);
-void getValueList(pNode, char **);
 
 #endif

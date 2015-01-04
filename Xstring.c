@@ -34,6 +34,9 @@ void printHello(void) {
 	free(cwd);
 }
 
+void foo() {
+	printf("123");
+}
 void setBackgroundStr(pString *str) {
 	clearStr(str);
 	*str = (pString)malloc(sizeof(String));

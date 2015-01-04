@@ -1,12 +1,12 @@
-#include "main.h"
+#include "input.h"
 
 char input(pNode *list) {
 	char ch = EOS;
 	pString str = NULL, backgroundStr = NULL;
 	bool state = false;
 
-	clearList(list);
-	clearStr(&str);
+	initList(list);
+	initStr(&str);
 	setBackgroundStr(&backgroundStr);
 
 	while (ch = getchar()) {
@@ -37,11 +37,12 @@ char input(pNode *list) {
 			case DELIMITER:
 			case EOF:
 			case SEPARATOR:
-				pushList(str, list);
+				if (str->length)
+					pushBackList(str, *list);
 
-				clearStr(&str);
+				initStr(&str);
 				if (ch == BACKGROUND) {
-					pushList(backgroundStr, list);
+					pushBackList(backgroundStr, *list);
 					continue;
 				}
 				if (ch == SEPARATOR)
@@ -49,9 +50,10 @@ char input(pNode *list) {
 				return ch;
 		}
 	}
+	return 0;
 }
 
-void Xexit() {
+void Xexit(void) {
 	printf("!!Custom UNIX shell closed!!\n\n");
 	exit(EXIT_SUCCESS);
 }

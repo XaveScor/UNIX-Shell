@@ -52,7 +52,6 @@ void setBackgroundStr(pString *str) {
 }
 
 void getStr(pString str, char **value) {
-	free(*value);
 	*value = (char *)malloc((1 + str->length) * sizeof(char));
 	memcpy(*value, str->data, (str->length + 1) * sizeof(char));
 }

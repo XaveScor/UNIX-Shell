@@ -6,5 +6,6 @@ cppcheck
 
 #Text files
 *.log
-*.swp
+*.s*
+*~
 startTests

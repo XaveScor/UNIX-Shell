@@ -1,7 +1,9 @@
 #ifndef INPUT_H
 
 #define INPUT_H
-#include "input.h"
+#include "list.h"
+#include "Xstring.h"
+#include "systemHeaders.h"
 
 #define DELIMITER '\n'
 #define SEPARATOR ' '
@@ -9,6 +11,6 @@
 #define BACKGROUND '&'
 
 char input(pNode *);
-void Xexit();
+void Xexit(void);
 
 #endif

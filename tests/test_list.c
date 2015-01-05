@@ -1,7 +1,6 @@
 #include "unity.h"
 
 #include "list.h"
-#include "Xstring.c"
 
 void setUp(void)
 {

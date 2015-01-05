@@ -1,7 +1,5 @@
 #include "unity.h"
 
-#include "Xstring.c"
-#include "list.c"
 #include "input.h"
 
 #define STDIN 0

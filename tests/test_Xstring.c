@@ -55,3 +55,7 @@ void test_setBackgroundStr(void) {
 	setBackgroundStr(&str);
 	TEST_ASSERT_EQUAL_STRING(str->data, "&");
 }
+
+void test_stringCmp(void) {
+	
+}

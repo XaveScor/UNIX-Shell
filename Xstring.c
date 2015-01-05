@@ -46,12 +46,16 @@ void setBackgroundStr(pString *str) {
 	(*str)->data = (char *)malloc((*str)->mem_alloc);
 	assert((*str)->data);	
 
-	(*str)->data[0] = '&';
-	(*str)->data[1] = '\0';
+	(*str)->data[0] = BACKGROUND;
+	(*str)->data[1] = EOS;
 	(*str)->length = 1;
 }
 
 void getStr(pString str, char **value) {
 	*value = (char *)malloc((1 + str->length) * sizeof(char));
 	memcpy(*value, str->data, (str->length + 1) * sizeof(char));
+}
+
+int stringCmp(const char *str, pString string) {
+	return strcmp(string->data, str);
 }

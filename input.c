@@ -29,10 +29,8 @@ char input(pNode *list) {
 				state = true;
 				break;
 
-			default:
-				addSymbol(ch, str);
-				break;
-
+			case OUTPUT_CH:	
+			case INPUT_CH:
 			case BACKGROUND:
 			case DELIMITER:
 			case EOF:
@@ -47,7 +45,17 @@ char input(pNode *list) {
 				}
 				if (ch == SEPARATOR)
 					continue;
-				return ch;
+				if (ch == DELIMITER || ch == EOF)
+					return ch;
+				addSymbol(ch, str);
+				pushBackList(str, *list);
+				initStr(&str);
+				continue;
+
+			default:
+				addSymbol(ch, str);
+				break;
+
 		}
 	}
 	return 0;

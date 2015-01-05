@@ -9,12 +9,15 @@
 #include <assert.h>
 #include <sys/wait.h>
 #include <sys/types.h>
+#include <fcntl.h>
 
 #define EOS '\0'
 #define DELIMITER '\n'
 #define SEPARATOR ' '
 #define BORDER '"'
 #define BACKGROUND '&'
+#define INPUT_CH '<'
+#define OUTPUT_CH '>'
 
 #define LAST_NODE (pNode *)NULL
 #define MULTIPLYER 1.6
@@ -28,9 +31,7 @@ typedef struct sService* pService;
 typedef struct sService {
 	bool background;
 	char *input;
-	char *outputWrite;
-	char *outputAppend;
-	char *error;
+	char *output;
 } service_t;
 
 typedef struct sNodeNav {
@@ -69,7 +70,8 @@ void clearStr(pString *);
 void printHello(void);
 void setBackgroundStr(pString *);
 void getStr(pString, char **);
-
+int stringCmp(const char *, pString);
+ 
 void exec(pNode);
 void execParent(void);
 void execChild(pNode);

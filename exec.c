@@ -14,7 +14,6 @@ void exec(pNode list) {
 
 	if (!strcmp(list->value, "exit"))
 		Xexit();
-
 	if (fork())
 		return execParent();
 
@@ -25,10 +24,39 @@ void execParent(void) {
 	wait(0);
 }
 
+void cutServiceSymbolsAndCheckErrors(pNode *list, pService *service) {
+	*service = (pService)calloc(1, sizeof(service_t));
+	atStartList(list);
+
+	while (nextNodeList(list)) {
+		if (!strcmp((*list)->value, "&")) {
+			if (nextNodeList(list)) {
+				errorRequest("Wrong Request");
+			}
+			(*service)->background = true;
+			removeNodesList(list, LAST_NODE);
+			return;
+		}
+		getStreamFromNode(list, "<", &((*service)->input));
+		getStreamFromNode(list, ">", &((*service)->output));
+	}
+}
+
 void execChild(pNode list) {
 	pService service = NULL;
 	
 	cutServiceSymbolsAndCheckErrors(&list, &service);
+	if (service->output) {
+		int fd = open(service->output, O_CREAT, 0664);
+		dup2(fd, 1);
+	}
+	if (service->input) {
+		if (access(service->input, R_OK) == -1)
+			errorRequest("Input file error");
+		int fd = open(service->input, O_RDONLY);
+		dup2(fd, 0);
+	}
+
 	if (service->background) {
 		//Отвязываемся от консоли
 		if (fork()) {
@@ -49,7 +77,6 @@ void execChild(pNode list) {
 			printf("---------------------\n");
 			exit(EXIT_SUCCESS);
 		}
-
 		close(0);
 		close(1);
 		close(2);
@@ -71,35 +98,7 @@ void execCD(char *path) {
 	}
 }
 
-void cutServiceSymbolsAndCheckErrors(pNode *list, pService *service) {
-	*service = (pService)calloc(1, sizeof(service_t));
-	
-	atStartList(list);
 
-	while (nextNodeList(list)) {
-		if (!strcmp((*list)->value, "&")) {
-			if (nextNodeList(list)) {
-				errorRequest("Wrong Request");
-			}
-			(*service)->background = true;
-			removeNodesList(list, LAST_NODE);
-			return;
-		}
-		getStreamFromNode(list, "2>", &((*service)->error));
-		getStreamFromNode(list, ">", &((*service)->outputWrite));
-		if ((*service)->outputWrite) {
-			free((*service)->outputAppend);
-			(*service)->outputAppend = NULL;
-		}
-		getStreamFromNode(list, "<", &((*service)->input));
-		getStreamFromNode(list, ">>", &((*service)->outputAppend));
-		if ((*service)->outputAppend) {
-			free((*service)->outputWrite);
-			(*service)->outputWrite = NULL;
-		}
-
-	}
-}
 
 void errorRequest(const char *error) {
 	perror(error);
@@ -107,15 +106,14 @@ void errorRequest(const char *error) {
 }
 
 void getStreamFromNode(pNode *from, const char *sign, char **to) {
-	if (!from)
+	if (!(*from))
 		return;
 
 	if (!strcmp((*from)->value, sign)) {
 		if (!(*from)->next) {
 			errorRequest("WrongRequest");
 		}
-
 		getNodeValueList((*from)->next, to);
-		removeNodesList(from, &((*from)->next->next));
+		removeNodesList(from, &((*from)->next));
 	}
 }

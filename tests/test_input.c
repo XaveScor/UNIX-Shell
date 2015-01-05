@@ -22,6 +22,8 @@ void test_input(void) {
 		"test    \"test2   test3\"     test4\n",
 		"test    \"  test2           \n",
 		"test &test2\n",
+		"test \"&test\n",
+		"test>test1<test4\n",
 		NULL
 	};
 	char *ans[][250] = {
@@ -29,7 +31,9 @@ void test_input(void) {
 		{"test", "test1", "test2", NULL},
 		{"test", "test2   test3", "test4", NULL},
 		{"test", "  test2           ", NULL},
-		{"test", "&", "test2"}
+		{"test", "&", "test2", NULL},
+		{"test", "&test", NULL},
+		{"test", ">", "test1", "<", "test4", NULL}
 	};
 	pNode list = NULL;
 	int i = 0;
@@ -39,8 +43,7 @@ void test_input(void) {
 		char out = input(&list);
 		int j = 0;
 		atStartList(&list);	
-		while(ans[i][j] != NULL) {
-			list = list->next;
+		while(ans[i][j] != NULL && nextNodeList(&list)) {
 			printf("--(%s)\n", list->value);
 			TEST_ASSERT_EQUAL_STRING(list->value, ans[i][j]);
 			++j;

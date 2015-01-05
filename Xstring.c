@@ -1,4 +1,4 @@
-#include "Xstring.h"
+#include "main.h"
 
 void addSymbol(char ch, pString str) {
 	if (str->mem_alloc == str->length + 1) {

@@ -9,3 +9,4 @@ cppcheck
 *.s*
 *~
 startTests
+ignore/*

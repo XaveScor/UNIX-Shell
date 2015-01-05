@@ -1,11 +1,16 @@
 #include "main.h"
 
 void exec(pNode list) {
-	if (list == NULL)
+	if (!list)
 		return;
 
-	if (!strcmp(list->value, "cd"))
-		return execCD(list->next);
+	atStartList(&list);
+	nextNodeList(&list);
+
+	if (!strcmp(list->value, "cd")) {
+		nextNodeList(&list);
+		return execCD(list->value);
+	}
 
 	if (!strcmp(list->value, "exit"))
 		Xexit();
@@ -16,25 +21,20 @@ void exec(pNode list) {
 	execChild(list);
 }
 
-void execParent() {
+void execParent(void) {
 	wait(0);
 }
 
 void execChild(pNode list) {
-	flag_t flag = getFlag(list);
-
-	if (isFlag(flag, FLAG_ERROR)) {
-		perror("Wrong input");
-		exit(EXIT_FAILURE);
-	}
+	bool isBackground = false;
 	
-	if (isFlag(flag, FLAG_BACKGROUND)) {
+	cutServiceSymbolsAndCheckErrors(&list, &isBackground);
+	if (isBackground) {
 		//Отвязываемся от консоли
 		if (fork()) {
 			exit(EXIT_SUCCESS);
 		}
 		setsid();
-
 		pid_t childPid;
 		// Выводим сообщение о завершении
 		if (childPid = fork()) {
@@ -55,17 +55,50 @@ void execChild(pNode list) {
 		close(2);
 	}
 
-	char **argv;
+	char **argv = NULL;
 	listToArray(list, &argv);
-	execvp(list->value, argv);
+	execvp(argv[0], argv);
 	perror("Wrong input");
 	
 	exit(EXIT_FAILURE);
 }
 
-void execCD(pNode child) {
-	if (!child)
-		return;
+void execCD(char *path) {
+	switch (chdir(path)) {
+		case 0: //Directory changed
+			break;
+		default:
+			perror("Error path");
+	}
+}
 
-	chdir(child->value);
+void cutServiceSymbolsAndCheckErrors(pNode *list, bool *isBackground) {
+	*isBackground = false;
+	atStartList(list);
+
+	while (nextNodeList(list)) {
+		if (!strcmp((*list)->value, "&")) {
+			if (nextNodeList(list)) {
+				perror("Wrong request");
+				exit(EXIT_FAILURE);
+			}
+			*isBackground = true;
+			removeNodesList(list, LAST_NODE);
+			return;
+		}
+	}
+}
+
+void listToArray(pNode list, char ***array) {
+	atStartList(&list);
+	int nodeNum;
+	for (nodeNum = 0; nextNodeList(&list); ++nodeNum);
+	*array = (char **)malloc((nodeNum + 1) * sizeof(char *));
+	(*array)[nodeNum] = NULL;
+
+	atStartList(&list);
+	for (nodeNum = 0; nextNodeList(&list); ++nodeNum) {
+		(*array)[nodeNum] = (char *)malloc((strlen(list->value) + 1) * sizeof(char));
+		strcpy((*array)[nodeNum], list->value);
+	}
 }

@@ -1,4 +1,4 @@
-#include "input.h"
+#include "main.h"
 
 char input(pNode *list) {
 	char ch = EOS;

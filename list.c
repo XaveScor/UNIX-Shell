@@ -1,4 +1,4 @@
-#include "list.h"
+#include "main.h"
 
 void initList(pNode *list) {
 	if (*list) {

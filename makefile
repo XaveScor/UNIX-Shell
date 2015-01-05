@@ -3,13 +3,15 @@ OBJMODULES = $(SRCMODULES:.c=.o)
 CFLAGS = -std=c99 -O0
 FILENAME = Xshell
 TEMP_MAKE_FILE = deps.mk
+OUTPUT_TYPE = -o
 
 $(FILENAME):	$(OBJMODULES)
-		$(CC) $^ -o $@ $(CFLAGS); make clean
+		echo $^
+		$(CC) $^ $(OUTPUT_TYPE) $@ $(CFLAGS)
 
 %.o: %.c %.h
-		$(CC) -c $< $(CFLAGS) -o $@
-		
+		$(CC) -c $< $(CFLAGS) $(OUTPUT_TYPE) $@
+
 ifneq (clean, $(MAKECMDGOALS))
 -include $(TEMP_MAKE_FILE)
 endif
@@ -17,5 +19,8 @@ endif
 $(TEMP_MAKE_FILE): $(SRCMODULES)
 		$(CC) -MM $^ > $@
 
-clean:		
-		rm -f $(OBJMODULES) $(TEMP_MAKE_FILE)
+clean:
+		$(RM) $(OBJMODULES) $(TEMP_MAKE_FILE)
+
+run:
+		./$(FILENAME)

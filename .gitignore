@@ -1,7 +1,12 @@
 #Binary files
 Xshell
 cppcheck
+*.o
+*.mk
 
 #Text files
 *.log
-*.swp
+*.s*
+*~
+startTests
+ignore/*

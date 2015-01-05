@@ -1,6 +1,6 @@
 #include "main.h"
 
-int main() {
+int main(void) {
 	pNode list = NULL;
 	char ch;
 

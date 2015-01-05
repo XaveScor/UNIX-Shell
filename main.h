@@ -10,30 +10,59 @@
 #include <sys/wait.h>
 #include <sys/types.h>
 
-#define DELIMITER '\n'
 #define EOS '\0'
+#define DELIMITER '\n'
 #define SEPARATOR ' '
 #define BORDER '"'
+#define BACKGROUND '&'
+
+#define LAST_NODE (pNode *)NULL
 #define MULTIPLYER 1.6
 
 
 typedef struct sNode* pNode;
-typedef struct sNode{
+typedef struct sNodeNav* pNodeNav;
+typedef struct sStr* pString;
+
+
+typedef struct sNodeNav {
+	pNode first;
+	pNode last;
+} NodeNav;
+
+typedef struct sNode {
 	char *value;
 	pNode next;
+	pNode prev;
+	pNodeNav nav;
 } Node;
 
+typedef struct sStr {
+	char *data;
+	size_t length;
+	size_t mem_alloc;
+} String;
+
+
 char input(pNode *);
-void Xexit();
+void Xexit(void);
 
-void clearList(pNode *);
-void pushList(char *, pNode *);
+void initList(pNode *);
+void pushBackList(pString, pNode);
+bool nextNodeList(pNode *);
+void atStartList(pNode *);
+void removeNodesList(pNode *, pNode *);
 
-void addSymbol(char, char **, size_t *, size_t *);
-void clearStr(char **);
-void printHello();
+void addSymbol(char, pString);
+void initStr(pString *);
+void clearStr(pString *);
+void printHello(void);
+void setBackgroundStr(pString *);
+void getStr(pString, char **);
 
 void exec(pNode);
-void execParent();
+void execParent(void);
 void execChild(pNode);
-void execCD(pNode);
+void execCD(char *);
+void cutServiceSymbolsAndCheckErrors(pNode *, bool *);
+void listToArray(pNode, char ***);

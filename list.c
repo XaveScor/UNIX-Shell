@@ -1,35 +1,65 @@
 #include "main.h"
 
-void clearList(pNode *list) {
-	pNode next;
-	while (*list) {
-		next = (*list)->next;
-		free((*list)->value);
-		free(*list);
-		(*list) = next;
+void initList(pNode *list) {
+	if (*list) {
+		atStartList(list);
+		removeNodesList(list, NULL);
 	}
+	*list = (pNode)calloc(1, sizeof(Node));
+	(*list)->nav = (pNodeNav)malloc(sizeof(NodeNav));
+	(*list)->nav->first = *list;
+	(*list)->nav->last = *list;
 }
 
-void pushList(char *str, pNode *list) {
-	if (!strlen(str))
-		return;
+void pushBackList(pString str, pNode list) {
+	pNode newNode = (pNode)malloc(sizeof(Node));
+	newNode->nav = list->nav;
+	newNode->prev = list->nav->last;
+	newNode->next = NULL;
+	newNode->prev->next = newNode;
 
-	pNode el = (pNode)malloc(sizeof(Node));
-	assert(el);
-	el->value = (char *)malloc(sizeof(char) * strlen(str) + 1);
-	assert(el->value);
-	el->next = NULL;
+	getStr(str, &(newNode->value));
 
-	strcpy(el->value, str);
+	newNode->nav->last = newNode;
+}
 
-	if (!(*list)) {
-		*list = el;
-		return;
+bool nextNodeList(pNode *list) {
+	if (*list != (*list)->nav->last) {
+		*list = (*list)->next;
+		return true;
+	}
+	return false;
+}
+
+void atStartList(pNode *list) {
+	*list = (*list)->nav->first;
+}
+
+void removeNodesList(pNode *start, pNode *finish) {
+	pNode backup = *start;
+	pNode endNode;
+	if (*start == (*start)->nav->first)
+		if (!nextNodeList(start))
+			return;
+
+	if (finish != LAST_NODE) {
+		(*finish)->prev = (*start)->prev;
+		(*start)->prev->next = *finish;
+		endNode = *finish;	
+	}
+	else {
+		(*start)->nav->last = (*start)->prev;
+		(*start)->prev->next = NULL;
+		endNode = NULL;
+	}
+	
+	while (*start != endNode) {
+		pNode remove = *start;
+		*start = (*start)->next;
+		free(remove->value);
+		free(remove);
 	}
 
-	pNode temp = *list;
-	while (temp->next) {
-		temp = temp->next;
-	}
-	temp->next = el;
+	if (!(*start))
+		*start = backup;
 }

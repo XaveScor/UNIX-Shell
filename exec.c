@@ -1,11 +1,16 @@
 #include "main.h"
 
 void exec(pNode list) {
-	if (list == NULL)
+	if (!list)
 		return;
 
-	if (!strcmp(list->value, "cd"))
-		return execCD(list->next);
+	atStartList(&list);
+	nextNodeList(&list);
+
+	if (!strcmp(list->value, "cd")) {
+		nextNodeList(&list);
+		return execCD(list->value);
+	}
 
 	if (!strcmp(list->value, "exit"))
 		Xexit();
@@ -16,39 +21,84 @@ void exec(pNode list) {
 	execChild(list);
 }
 
-void execParent() {
+void execParent(void) {
 	wait(0);
 }
 
 void execChild(pNode list) {
+	bool isBackground = false;
+	
+	cutServiceSymbolsAndCheckErrors(&list, &isBackground);
+	if (isBackground) {
+		//Отвязываемся от консоли
+		if (fork()) {
+			exit(EXIT_SUCCESS);
+		}
+		setsid();
+		pid_t childPid;
+		// Выводим сообщение о завершении
+		if (childPid = fork()) {
+			int status;
+			wait(&status);
+
+			putchar('\n');
+			printf("---------------------\n");
+			printf("Process closed.\n");
+			printf("pid = %d\n", childPid);
+			printf("exit status = %d\n", status);
+			printf("---------------------\n");
+			exit(EXIT_SUCCESS);
+		}
+
+		close(0);
+		close(1);
+		close(2);
+	}
+
 	char **argv = NULL;
-
-	size_t i = 0;
-	pNode temp = list;
-	while(temp) {
-		++i;
-		temp = temp->next;
-	}
-
-	argv = (char **)malloc(sizeof(char *) * (i + 1)); // Last pointer is NULL
-	i = 0;
-	temp = list;
-	while(temp) {
-		argv[i] = (char *)malloc(sizeof(char) * (strlen(temp->value) + 1)); // strlen not calculate a last '\0' symbol
-		strcpy(argv[i], temp->value);
-		temp = temp->next;
-		++i;
-	}
-	argv[i] = NULL;
-
-	execvp(list->value, argv);
-	perror("Invalid input");
-	exit(EXIT_SUCCESS);
+	listToArray(list, &argv);
+	execvp(argv[0], argv);
+	perror("Wrong input");
+	
+	exit(EXIT_FAILURE);
 }
 
-void execCD(pNode child) {
-	if (!child)
-		return;
+void execCD(char *path) {
+	switch (chdir(path)) {
+		case 0: //Directory changed
+			break;
+		default:
+			perror("Error path");
+	}
+}
 
-	chdir(child->value);
+void cutServiceSymbolsAndCheckErrors(pNode *list, bool *isBackground) {
+	*isBackground = false;
+	atStartList(list);
+
+	while (nextNodeList(list)) {
+		if (!strcmp((*list)->value, "&")) {
+			if (nextNodeList(list)) {
+				perror("Wrong request");
+				exit(EXIT_FAILURE);
+			}
+			*isBackground = true;
+			removeNodesList(list, LAST_NODE);
+			return;
+		}
+	}
+}
+
+void listToArray(pNode list, char ***array) {
+	atStartList(&list);
+	int nodeNum;
+	for (nodeNum = 0; nextNodeList(&list); ++nodeNum);
+	*array = (char **)malloc((nodeNum + 1) * sizeof(char *));
+	(*array)[nodeNum] = NULL;
+
+	atStartList(&list);
+	for (nodeNum = 0; nextNodeList(&list); ++nodeNum) {
+		(*array)[nodeNum] = (char *)malloc((strlen(list->value) + 1) * sizeof(char));
+		strcpy((*array)[nodeNum], list->value);
+	}
 }

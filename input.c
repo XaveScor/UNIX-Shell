@@ -1,13 +1,13 @@
 #include "main.h"
 
 char input(pNode *list) {
-	size_t cur = 0,
-		   len = 1;
-	char ch = EOS, *str = NULL;
+	char ch = EOS;
+	pString str = NULL, backgroundStr = NULL;
 	bool state = false;
 
-	clearList(list);
-	clearStr(&str);
+	initList(list);
+	initStr(&str);
+	setBackgroundStr(&backgroundStr);
 
 	while (ch = getchar()) {
 		if (state)
@@ -20,7 +20,7 @@ char input(pNode *list) {
 						continue;
 					break;
 				default:
-					addSymbol(ch, &str, &cur, &len);
+					addSymbol(ch, str);
 					continue;
 			}
 
@@ -30,25 +30,30 @@ char input(pNode *list) {
 				break;
 
 			default:
-				addSymbol(ch, &str, &cur, &len);
+				addSymbol(ch, str);
 				break;
 
+			case BACKGROUND:
 			case DELIMITER:
 			case EOF:
 			case SEPARATOR:
-				str[cur] = EOS;
-				pushList(str, list);
+				if (str->length)
+					pushBackList(str, *list);
 
-				clearStr(&str);
-				cur = 0, len = 1;
+				initStr(&str);
+				if (ch == BACKGROUND) {
+					pushBackList(backgroundStr, *list);
+					continue;
+				}
 				if (ch == SEPARATOR)
 					continue;
 				return ch;
 		}
 	}
+	return 0;
 }
 
-void Xexit() {
+void Xexit(void) {
 	printf("!!Custom UNIX shell closed!!\n\n");
 	exit(EXIT_SUCCESS);
 }

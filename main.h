@@ -23,7 +23,15 @@
 typedef struct sNode* pNode;
 typedef struct sNodeNav* pNodeNav;
 typedef struct sStr* pString;
+typedef struct sService* pService;
 
+typedef struct sService {
+	bool background;
+	char *input;
+	char *outputWrite;
+	char *outputAppend;
+	char *error;
+} service_t;
 
 typedef struct sNodeNav {
 	pNode first;
@@ -52,6 +60,8 @@ void pushBackList(pString, pNode);
 bool nextNodeList(pNode *);
 void atStartList(pNode *);
 void removeNodesList(pNode *, pNode *);
+void listToArray(pNode, char ***);
+void getNodeValueList(pNode, char **);
 
 void addSymbol(char, pString);
 void initStr(pString *);
@@ -64,5 +74,6 @@ void exec(pNode);
 void execParent(void);
 void execChild(pNode);
 void execCD(char *);
-void cutServiceSymbolsAndCheckErrors(pNode *, bool *);
-void listToArray(pNode, char ***);
+void cutServiceSymbolsAndCheckErrors(pNode *, pService *);
+void errorRequest(const char *);
+void getStreamFromNode(pNode *, const char *, char **);

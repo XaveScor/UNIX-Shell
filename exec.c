@@ -26,10 +26,10 @@ void execParent(void) {
 }
 
 void execChild(pNode list) {
-	bool isBackground = false;
+	pService service = NULL;
 	
-	cutServiceSymbolsAndCheckErrors(&list, &isBackground);
-	if (isBackground) {
+	cutServiceSymbolsAndCheckErrors(&list, &service);
+	if (service->background) {
 		//Отвязываемся от консоли
 		if (fork()) {
 			exit(EXIT_SUCCESS);
@@ -58,9 +58,8 @@ void execChild(pNode list) {
 	char **argv = NULL;
 	listToArray(list, &argv);
 	execvp(argv[0], argv);
-	perror("Wrong input");
 	
-	exit(EXIT_FAILURE);
+	errorRequest("Wrong Input");
 }
 
 void execCD(char *path) {
@@ -72,33 +71,51 @@ void execCD(char *path) {
 	}
 }
 
-void cutServiceSymbolsAndCheckErrors(pNode *list, bool *isBackground) {
-	*isBackground = false;
+void cutServiceSymbolsAndCheckErrors(pNode *list, pService *service) {
+	*service = (pService)calloc(1, sizeof(service_t));
+	
 	atStartList(list);
 
 	while (nextNodeList(list)) {
 		if (!strcmp((*list)->value, "&")) {
 			if (nextNodeList(list)) {
-				perror("Wrong request");
-				exit(EXIT_FAILURE);
+				errorRequest("Wrong Request");
 			}
-			*isBackground = true;
+			(*service)->background = true;
 			removeNodesList(list, LAST_NODE);
 			return;
 		}
+		getStreamFromNode(list, "2>", &((*service)->error));
+		getStreamFromNode(list, ">", &((*service)->outputWrite));
+		if ((*service)->outputWrite) {
+			free((*service)->outputAppend);
+			(*service)->outputAppend = NULL;
+		}
+		getStreamFromNode(list, "<", &((*service)->input));
+		getStreamFromNode(list, ">>", &((*service)->outputAppend));
+		if ((*service)->outputAppend) {
+			free((*service)->outputWrite);
+			(*service)->outputWrite = NULL;
+		}
+
 	}
 }
 
-void listToArray(pNode list, char ***array) {
-	atStartList(&list);
-	int nodeNum;
-	for (nodeNum = 0; nextNodeList(&list); ++nodeNum);
-	*array = (char **)malloc((nodeNum + 1) * sizeof(char *));
-	(*array)[nodeNum] = NULL;
+void errorRequest(const char *error) {
+	perror(error);
+	exit(EXIT_FAILURE);
+}
 
-	atStartList(&list);
-	for (nodeNum = 0; nextNodeList(&list); ++nodeNum) {
-		(*array)[nodeNum] = (char *)malloc((strlen(list->value) + 1) * sizeof(char));
-		strcpy((*array)[nodeNum], list->value);
+void getStreamFromNode(pNode *from, const char *sign, char **to) {
+	if (!from)
+		return;
+
+	if (!strcmp((*from)->value, sign)) {
+		if (!(*from)->next) {
+			errorRequest("WrongRequest");
+		}
+
+		getNodeValueList((*from)->next, to);
+		removeNodesList(from, &((*from)->next->next));
 	}
 }

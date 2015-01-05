@@ -63,3 +63,24 @@ void removeNodesList(pNode *start, pNode *finish) {
 	if (!(*start))
 		*start = backup;
 }
+
+void listToArray(pNode list, char ***array) {
+	atStartList(&list);
+	int nodeNum;
+	for (nodeNum = 0; nextNodeList(&list); ++nodeNum);
+	*array = (char **)calloc(1, (nodeNum + 1) * sizeof(char *));
+
+	atStartList(&list);
+	for (nodeNum = 0; nextNodeList(&list); ++nodeNum) {
+		getNodeValueList(list, &((*array)[nodeNum]));
+	}
+}
+
+void getNodeValueList(pNode list, char **str) {
+	if (*str) {
+		free(*str);
+	}
+
+	*str = (char *)malloc((strlen(list->value) + 1) * sizeof(char));
+	strcpy(*str, list->value);
+}

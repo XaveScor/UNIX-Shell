@@ -117,3 +117,53 @@ void test_removeNodesList(void) {
 	TEST_ASSERT_EQUAL_PTR(list, list->nav->last);
 	TEST_ASSERT_NULL(list->next); 
 }
+
+void test_listToArray(void) {
+	pNode list = NULL;
+	pString str = NULL;
+	char *ans[] = {"Test", "Test1", "Test12"};	
+
+	initList(&list);
+	initStr(&str);
+	
+	addStr2String("Test", str);
+	pushBackList(str,list);
+	addSymbol('1', str);
+	pushBackList(str, list);
+	addSymbol('2', str);
+	pushBackList(str, list);
+
+	char **array = NULL;
+	listToArray(list, &array);
+	int i;
+	for (i = 0; i < 3; ++i) {
+		TEST_ASSERT_NOT_NULL(array[i]);
+		TEST_ASSERT_EQUAL_STRING(array[i], ans[i]);
+	}
+	TEST_ASSERT_NULL(array[3]);
+}
+
+void test_getNodeValueList(void) {
+	pNode list = NULL;
+	pString str = NULL;
+	char *ans[] = {"Test", "Test1", "Test12"};	
+
+	initList(&list);
+	initStr(&str);
+	
+	addStr2String("Test", str);
+	pushBackList(str,list);
+	addSymbol('1', str);
+	pushBackList(str, list);
+	addSymbol('2', str);
+	pushBackList(str, list);
+
+	char *testStr = NULL;
+	int i;
+	for (i = 0; i < 3; ++i) {
+		nextNodeList(&list);
+		getNodeValueList(list, &testStr);
+		TEST_ASSERT_NOT_NULL(testStr);
+		TEST_ASSERT_EQUAL_STRING(testStr, ans[i]);
+	}
+}
